@@ -1,0 +1,117 @@
+<head>
+    <script>
+        const log = console.log;
+
+        const products = [
+            { name: '아이패드', price: 1000 },
+            { name: '맥미니', price: 1500 },
+            { name: '맥북', price: 1700 }
+        ];
+
+        let names = [];
+        for (const p of products) {
+            names.push(p.name);
+        }
+        log(names);
+
+
+        let prices = [];
+        for (const p of products) {
+            prices.push(p.price);
+        }
+        log(prices);
+
+        // map version
+        const map = (f, iter) => {
+            let results = [];
+            for (const a of iter) {
+                results.push(f(a));
+            }
+            return results;
+        }
+
+        const names2 = map((p) => p.name, products);
+        log(names2);
+
+        const prices2 = map((p) => p.price, products);
+        log(prices2);
+
+        // map(f, iter) can using with iterables
+        log(map((el) => el.nodeName, document.querySelectorAll('*')));
+
+        const m = new Map();
+        m.set('a', 10);
+        m.set('b', 20);
+        const mm = new Map(map(([k, v]) => [k, v * v], m));
+        log(mm);
+
+        // filter
+        const filter = (f, iter) => {
+            let res = [];
+            for (a of iter) {
+                if (f(a)) res.push(a);
+            }
+            return res;
+        }
+
+        const price1500 = filter(p => p.price === 1500, products);
+        log(...price1500);
+
+        log(filter(n => n % 2, function* () {
+            yield 1;
+            yield 2;
+            yield 3;
+            yield 4;
+            yield 5;
+        }()));
+
+        // reduce : 값을 축약하는 개념
+        const reduce = (f, acc, iter) => {
+            if (iter === undefined) {
+                log('iter');
+                iter = acc[Symbol.iterator]();
+                acc = iter.next().value; // iter.next() has {done, value}
+            }
+
+            for (const a of iter) {
+                acc = f(acc, a);
+            }
+            return acc;
+        }
+
+        const adder = (a, b) => a + b;
+        log(reduce(adder, 0, [1, 2, 3, 4, 5]));
+        // acc omit support for this
+        log(reduce(adder, [1, 2, 3, 4, 5]));
+
+        log(reduce((total_price, p) => total_price + p.price, 0, products));
+        log(reduce(adder, map(p => p.price, products)) ?? 0);
+
+        // acc omit support not for this: must set initialize value
+        // ref QnA: https://www.inflearn.com/course/functional-es6/lecture/16582?tab=community&speed=1.75&q=86551
+        //log(reduce((obj, [k, v]) => Object.assign(obj, {[k]: v}), [["a", 1], ["b", 2]]));
+        log(reduce((obj, [k, v]) => Object.assign(obj, { [k]: v }), {}, [["a", 1], ["b", 2]]));
+
+        // composition
+        log(
+            reduce(
+                adder,
+                0,
+                map(p => p.price,
+                    filter(p => p.price > 1000, products)
+                )
+            )
+        );
+
+        log(
+            reduce(
+                adder,
+                0,
+                filter(price => price > 1000,
+                    map(p => p.price, products)
+                )
+            )
+        );
+
+    </script>
+</head>
