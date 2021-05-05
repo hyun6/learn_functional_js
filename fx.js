@@ -30,3 +30,8 @@ const reduce = curry((f, acc, iter) => {
     }
     return acc;
 });
+
+const go = (...args) => reduce((a, f) => f(a), args);
+
+// return function (a) => go(a, ...fs)
+const pipe = (...fs) => (a) => go(a, ...fs);
