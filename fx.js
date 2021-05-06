@@ -36,6 +36,15 @@ const go = (...args) => reduce((a, f) => f(a), args);
 // return function (a) => go(a, ...fs)
 const pipe = (...fs) => (a) => go(a, ...fs);
 
+const take = curry((l, iter) => {
+    let res = [];
+    for (const a of iter) {
+        res.push(a);
+        if (res.length === l) return res;
+    }
+    return res;
+});
+
 // iterable (collection) driven development
 // L's functions return iterable
 const L = {};
