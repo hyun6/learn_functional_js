@@ -64,13 +64,15 @@ L.entries = function *(obj) {
 
 L.flatten = function *(iter) {
     for (const a of iter) {
-        if (isIterable(a)) {
-            for (const b of a) {
-                yield b;
-            }
-        } else {
-            yield a;
-        }
+        if (isIterable(a)) yield *a;
+        else yield a;
+    }
+}
+
+L.deepFlatten = function *f(iter) {
+    for (const a of iter) {
+        if (isIterable(a)) yield *f(a);
+        else yield a;
     }
 }
 

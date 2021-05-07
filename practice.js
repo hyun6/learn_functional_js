@@ -33,7 +33,7 @@ const users = [
 
 log(find(u => u.age === 23, users))
 
-
 // test flatten
-console.log(take(3, L.flatten([1, [2, 3, 4], 5, 6])));
 console.log(flatten([1, [2, 3, 4], 5, 6]));
+console.log(take(3, L.flatten([1, [2, [3, 4]], 5, 6])));
+console.log(take(5, L.deepFlatten([1, [2, [3, 4]], 5, 6])));
