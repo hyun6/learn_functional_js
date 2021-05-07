@@ -1,7 +1,23 @@
+
+
+const isIterable = (iter) => iter && iter[Symbol.iterator];
+
 // curry is like bind
 // lazy call with additional arg
 const curry = (f) => (arg, ..._) =>
     _.length ? f(arg, ..._) : (..._) => f(arg, ..._);
+
+const reduce = curry((f, acc, iter) => {
+    if (iter === undefined) {
+        iter = acc[Symbol.iterator]();
+        acc = iter.next().value; // iter.next() has {done, value}
+    }
+
+    for (const a of iter) {
+        acc = f(acc, a);
+    }
+    return acc;
+});
 
 const go = (...args) => reduce((a, f) => f(a), args);
 
@@ -46,6 +62,18 @@ L.entries = function *(obj) {
     for (const k in obj) yield [k, obj[k]]
 }
 
+L.flatten = function *(iter) {
+    for (const a of iter) {
+        if (isIterable(a)) {
+            for (const b of a) {
+                yield b;
+            }
+        } else {
+            yield a;
+        }
+    }
+}
+
 const takeAll = take(Infinity);
 
 const map = curry(pipe(
@@ -58,16 +86,7 @@ const filter = curry(pipe(
     takeAll
 ));
 
-const reduce = curry((f, acc, iter) => {
-    if (iter === undefined) {
-        iter = acc[Symbol.iterator]();
-        acc = iter.next().value; // iter.next() has {done, value}
-    }
-
-    for (const a of iter) {
-        acc = f(acc, a);
-    }
-    return acc;
-});
-
-
+const flatten = pipe(
+    L.flatten,
+    takeAll
+)
