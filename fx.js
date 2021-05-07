@@ -3,34 +3,6 @@
 const curry = (f) => (arg, ..._) =>
     _.length ? f(arg, ..._) : (..._) => f(arg, ..._);
 
-const map = curry((f, iter) => {
-    let res = [];
-    for (const a of iter) {
-        res.push(f(a));
-    }
-    return res;
-});
-
-const filter = curry((f, iter) => {
-    let res = [];
-    for (a of iter) {
-        if (f(a)) res.push(a);
-    }
-    return res;
-});
-
-const reduce = curry((f, acc, iter) => {
-    if (iter === undefined) {
-        iter = acc[Symbol.iterator]();
-        acc = iter.next().value; // iter.next() has {done, value}
-    }
-
-    for (const a of iter) {
-        acc = f(acc, a);
-    }
-    return acc;
-});
-
 const go = (...args) => reduce((a, f) => f(a), args);
 
 // return function (a) => go(a, ...fs)
@@ -73,3 +45,29 @@ L.filter = curry(function* (f, iter) {
 L.entries = function *(obj) {
     for (const k in obj) yield [k, obj[k]]
 }
+
+const takeAll = take(Infinity);
+
+const map = curry(pipe(
+    L.map,
+    takeAll
+));
+
+const filter = curry(pipe(
+    L.filter,
+    takeAll
+));
+
+const reduce = curry((f, acc, iter) => {
+    if (iter === undefined) {
+        iter = acc[Symbol.iterator]();
+        acc = iter.next().value; // iter.next() has {done, value}
+    }
+
+    for (const a of iter) {
+        acc = f(acc, a);
+    }
+    return acc;
+});
+
+
