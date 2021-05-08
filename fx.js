@@ -1,5 +1,3 @@
-
-
 const isIterable = (iter) => iter && iter[Symbol.iterator];
 
 // curry is like bind
@@ -26,7 +24,6 @@ const simple_pipe = (...fs) => (a) => go(a, ...fs);
 
 // first function can have multiple args
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
-
 
 const take = curry((l, iter) => {
     let res = [];
@@ -62,37 +59,28 @@ L.filter = curry(function* (f, iter) {
 
 // obj to iter
 // obj = {k: v, k2, v2, ...} ==> [[k, v], [k2, v2], ...]
-L.entries = function *(obj) {
-    for (const k in obj) yield [k, obj[k]]
-}
+L.entries = function* (obj) {
+    for (const k in obj) yield [k, obj[k]];
+};
 
-L.flatten = function *(iter) {
+L.flatten = function* (iter) {
     for (const a of iter) {
-        if (isIterable(a)) yield *a;
+        if (isIterable(a)) yield* a;
         else yield a;
     }
-}
+};
 
-L.deepFlatten = function *f(iter) {
+L.deepFlatten = function* f(iter) {
     for (const a of iter) {
-        if (isIterable(a)) yield *f(a);
+        if (isIterable(a)) yield* f(a);
         else yield a;
     }
-}
+};
 
 const takeAll = take(Infinity);
 
-const map = curry(pipe(
-    L.map,
-    takeAll
-));
+const map = curry(pipe(L.map, takeAll));
 
-const filter = curry(pipe(
-    L.filter,
-    takeAll
-));
+const filter = curry(pipe(L.filter, takeAll));
 
-const flatten = pipe(
-    L.flatten,
-    takeAll
-)
+const flatten = pipe(L.flatten, takeAll);

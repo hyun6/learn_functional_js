@@ -74,8 +74,10 @@ document.querySelector("#cart").innerHTML = `
         products,
         sum(
             (p) =>
-            `<tr>
-                <td><input type="checkbox" ${p.is_selected ? 'checked' : ''}></td>
+                `<tr>
+                <td><input type="checkbox" ${
+                    p.is_selected ? "checked" : ""
+                }></td>
                 <td>${p.name}</td>
                 <td>${p.price}</td>
                 <td><input type="number" value="${p.quantity}"</td>
@@ -87,8 +89,8 @@ document.querySelector("#cart").innerHTML = `
         <td></td>
         <td>총합</td>
         <td> </td>
-        <td>${total_quantity(filter(p => p.is_selected, products))}</td>
-        <td>${total_price(filter(p => p.is_selected, products))}</td>
+        <td>${total_quantity(filter((p) => p.is_selected, products))}</td>
+        <td>${total_price(filter((p) => p.is_selected, products))}</td>
     </tr>
 </table>
 `;

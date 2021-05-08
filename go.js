@@ -75,7 +75,7 @@ go(
     (prices) => filter((price) => price > 1000)(prices),
     (prices) => reduce((total_price, price) => total_price + price)(prices),
     log
-)
+);
 
 // step2: iter => fn(f)(iter) ===> fn(f)
 // author explanation: a => f(a) 라는 함수는 그냥 f와 하는 일이 같습니다.
@@ -91,17 +91,14 @@ go(
 // step3: divide with pipe + go combination
 const total_price = pipe(
     map((p) => p.price),
-    reduce((total_price, price) => total_price + price),
+    reduce((total_price, price) => total_price + price)
 );
-const total_price_cond = cond => pipe(
-    filter(cond),
-    total_price,
-);
+const total_price_cond = (cond) => pipe(filter(cond), total_price);
 go(
     products,
     total_price_cond((p) => p.price > 1000),
     log
-)
+);
 
 // move to fx.js
 // curry is like bind

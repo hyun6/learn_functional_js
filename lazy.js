@@ -75,7 +75,6 @@ go(
     log
 );
 
-
 // L.range() is little faster
 // L.range()'s pros is lazy evaluation
 const test = (name, times, f) => {
