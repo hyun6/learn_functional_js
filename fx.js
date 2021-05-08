@@ -21,8 +21,12 @@ const reduce = curry((f, acc, iter) => {
 
 const go = (...args) => reduce((a, f) => f(a), args);
 
-// return function (a) => go(a, ...fs)
-const pipe = (...fs) => (a) => go(a, ...fs);
+// basic pipe return function (a) => go(a, ...fs)
+const simple_pipe = (...fs) => (a) => go(a, ...fs);
+
+// first function can have multiple args
+const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
+
 
 const take = curry((l, iter) => {
     let res = [];
