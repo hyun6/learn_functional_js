@@ -15,35 +15,35 @@ const pipe = (...fs) => (a) => go(a, ...fs);
 const pipe2 = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
 go(
-    0,
-    (a) => a + 1,
-    (a) => a + 10,
-    (a) => a + 100,
-    log
+  0,
+  (a) => a + 1,
+  (a) => a + 10,
+  (a) => a + 100,
+  log
 );
 
 const fs = pipe(
-    (a) => a + 1,
-    (a) => a + 10,
-    (a) => a + 100,
-    log
+  (a) => a + 1,
+  (a) => a + 10,
+  (a) => a + 100,
+  log
 );
 fs(0);
 
 const firstFn = (...args) => reduce((acc, a) => acc + a, args);
 const fs2 = pipe2(
-    firstFn,
-    (a) => a + 10,
-    (a) => a + 100,
-    log
+  firstFn,
+  (a) => a + 10,
+  (a) => a + 100,
+  log
 );
 fs2(7, 9, 4, 5); // pipe2(f, ...fs)([7, 9, 4, 5] => go(firstFn([7,9,4,5]), ...fs));
 
 // refactoring from map.html example
 const products = [
-    { name: "아이패드", price: 1000 },
-    { name: "맥미니", price: 1500 },
-    { name: "맥북", price: 1700 },
+  { name: '아이패드', price: 1000 },
+  { name: '맥미니', price: 1500 },
+  { name: '맥북', price: 1700 },
 ];
 
 // read from bottom, right to top, left
@@ -60,44 +60,44 @@ const products = [
 // read from top, left to bottom, right
 // top return to bottom input
 go(
-    products,
-    (products) => map((p) => p.price, products),
-    (prices) => filter((price) => price > 1000, prices),
-    (prices) => reduce((total_price, price) => total_price + price, prices),
-    log
+  products,
+  (products) => map((p) => p.price, products),
+  (prices) => filter((price) => price > 1000, prices),
+  (prices) => reduce((total_price, price) => total_price + price, prices),
+  log
 );
 
 // simplification by curry
 // step1: fn = curry(f, iter) ===> fn(f)(iter);
 go(
-    products,
-    (products) => map((p) => p.price)(products),
-    (prices) => filter((price) => price > 1000)(prices),
-    (prices) => reduce((total_price, price) => total_price + price)(prices),
-    log
+  products,
+  (products) => map((p) => p.price)(products),
+  (prices) => filter((price) => price > 1000)(prices),
+  (prices) => reduce((total_price, price) => total_price + price)(prices),
+  log
 );
 
 // step2: iter => fn(f)(iter) ===> fn(f)
 // author explanation: a => f(a) 라는 함수는 그냥 f와 하는 일이 같습니다.
 //  - a: iter, f: fn(f)
 go(
-    products,
-    map((p) => p.price),
-    filter((price) => price > 1000),
-    reduce((total_price, price) => total_price + price),
-    log
+  products,
+  map((p) => p.price),
+  filter((price) => price > 1000),
+  reduce((total_price, price) => total_price + price),
+  log
 );
 
 // step3: divide with pipe + go combination
 const total_price = pipe(
-    map((p) => p.price),
-    reduce((total_price, price) => total_price + price)
+  map((p) => p.price),
+  reduce((total_price, price) => total_price + price)
 );
 const total_price_cond = (cond) => pipe(filter(cond), total_price);
 go(
-    products,
-    total_price_cond((p) => p.price > 1000),
-    log
+  products,
+  total_price_cond((p) => p.price > 1000),
+  log
 );
 
 // move to fx.js
@@ -119,11 +119,11 @@ const f2 = add1;
 
 // 도전 과제: 아래 조건을 만족시키는 curry 구현 (hint 재귀)
 const curry2 = (f) =>
-    (curried = (...args) => {
-        return args.length >= f.length
-            ? f(...args)
-            : (...rest) => curried(...args, ...rest); // recursive call with concat all args
-    });
+  (curried = (...args) => {
+    return args.length >= f.length
+      ? f(...args)
+      : (...rest) => curried(...args, ...rest); // recursive call with concat all args
+  });
 
 // get args length from function
 const ff = (a, b, c) => a + b + c;
