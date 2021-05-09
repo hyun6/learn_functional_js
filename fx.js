@@ -1,3 +1,4 @@
+const log = console.log;
 const isIterable = (iter) => iter && iter[Symbol.iterator];
 
 // curry is like bind
@@ -5,16 +6,43 @@ const isIterable = (iter) => iter && iter[Symbol.iterator];
 const curry = (f) => (arg, ..._) =>
   _.length ? f(arg, ..._) : (..._) => f(arg, ..._);
 
+// go with handle first arg Promise case
+const go1 = (a, f) => a instanceof Promise ? (log('go1:promise'),a.then(f)) : (log('go1'),f(a));
+
 const reduce = curry((f, acc, iter) => {
   if (iter === undefined) {
     iter = acc[Symbol.iterator]();
     acc = iter.next().value; // iter.next() has {done, value}
   }
+  // step3: using go1() for first param is Promise case
+  return go1(acc, function recur(acc) {
+    for (const a of iter) {
+        acc = f(acc, a);
+        if (acc instanceof Promise) {log('recur:promise'); return acc.then(recur)};
+        log('recur');
+      }
+      return acc;
+  });
 
+  // step2: immediately run named function
+  /*
+  return function recur(acc) {
+    for (const a of iter) {
+        acc = f(acc, a);
+        if (acc instanceof Promise) return acc.then(recur);
+      }
+      return acc;
+  }(acc);
+  */
+  // step1: using Promise.then() but causing promise chaining
+  /*
   for (const a of iter) {
-    acc = f(acc, a);
+    acc = acc instanceof Promise ? acc.then(acc => f(acc, a)) : f(acc, a);
+    // acc = f(acc, a);
+    log(acc instanceof Promise);
   }
   return acc;
+  */
 });
 
 const go = (...args) => reduce((a, f) => f(a), args);
